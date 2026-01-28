@@ -37,3 +37,5 @@ export const requireAuth = (
     return res.status(401).json({ message: "Invalid token" });
   }
 };
+
+export default requireAuth;
