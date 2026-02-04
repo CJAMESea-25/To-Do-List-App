@@ -2,20 +2,34 @@ import { Response } from "express";
 import { Todo } from "../models/todo";
 import { AuthedRequest } from "../middleware/auth.middleware";
 
+type TodoStatus = "not_started" | "in_progress" | "completed";
+const ALLOWED_STATUS: TodoStatus[] = ["not_started", "in_progress", "completed"];
+
 export const createTodo = async (req: AuthedRequest, res: Response) => {
   try {
-    const { title, description } = req.body as { title?: string; description?: string };
+    const { title, description, status } = req.body as {
+      title?: string;
+      description?: string;
+      status?: TodoStatus;
+    };
 
-    if (!title) return res.status(400).json({ message: "Title is required" });
+    if (!title || !title.trim()) {
+      return res.status(400).json({ message: "Title is required" });
+    }
+
+    if (status && !ALLOWED_STATUS.includes(status)) {
+      return res.status(400).json({ message: "Invalid status" });
+    }
 
     const todo = await Todo.create({
       userId: req.user!.userId,
-      title,
-      description: description ?? ""
+      title: title.trim(),
+      description: description ?? "",
+      status: status ?? "not_started",
     });
 
     return res.status(201).json(todo);
-  } catch {
+  } catch (err) {
     return res.status(500).json({ message: "Failed to create task" });
   }
 };
@@ -24,7 +38,7 @@ export const getTodos = async (req: AuthedRequest, res: Response) => {
   try {
     const todos = await Todo.find({ userId: req.user!.userId }).sort({ createdAt: -1 });
     return res.status(200).json(todos);
-  } catch {
+  } catch (err) {
     return res.status(500).json({ message: "Failed to access task" });
   }
 };
@@ -32,11 +46,23 @@ export const getTodos = async (req: AuthedRequest, res: Response) => {
 export const updateTodo = async (req: AuthedRequest, res: Response) => {
   try {
     const { id } = req.params;
+
+    const { title, description, status } = req.body as {
+      title?: string;
+      description?: string;
+      status?: TodoStatus;
+    };
+
+    // validate status if provided
+    if (status !== undefined && !ALLOWED_STATUS.includes(status)) {
+      return res.status(400).json({ message: "Invalid status" });
+    }
+
     const update: Record<string, any> = {};
 
-    if (req.body.title !== undefined) update.title = req.body.title;
-    if (req.body.description !== undefined) update.description = req.body.description;
-    if (req.body.completed !== undefined) update.completed = req.body.completed;
+    if (title !== undefined) update.title = String(title).trim();
+    if (description !== undefined) update.description = String(description);
+    if (status !== undefined) update.status = status;
 
     const todo = await Todo.findOneAndUpdate(
       { _id: id, userId: req.user!.userId },
@@ -46,7 +72,7 @@ export const updateTodo = async (req: AuthedRequest, res: Response) => {
 
     if (!todo) return res.status(404).json({ message: "Task not found" });
     return res.status(200).json(todo);
-  } catch {
+  } catch (err) {
     return res.status(500).json({ message: "Failed to update task" });
   }
 };
@@ -59,7 +85,7 @@ export const deleteTodo = async (req: AuthedRequest, res: Response) => {
     if (!todo) return res.status(404).json({ message: "Task not found" });
 
     return res.status(200).json({ message: "Task deleted" });
-  } catch {
+  } catch (err) {
     return res.status(500).json({ message: "Failed to delete task" });
   }
 };
