@@ -17,10 +17,10 @@ export default function StatusDropdown({
 
   const cls =
     value === "completed"
-      ? `border-green-200 bg-green-50 text-green-700`
+      ? `border-green-200 bg-green-50 text-green-900`
       : value === "in_progress"
-      ? `border-blue-200 bg-blue-50 text-blue-700`
-      : `border-slate-200 bg-white text-slate-700`;
+      ? `border-blue-200 bg-blue-50 text-blue-900`
+      : `border-slate-200 bg-white text-slate-900`;
 
   return (
     <div className={`relative ${className}`}>
@@ -28,14 +28,14 @@ export default function StatusDropdown({
         className={`${base} ${cls} appearance-none pr-10`}
         value={value}
         onChange={(e) => onChange(e.target.value as TaskStatus)}
-        onClick={(e) => e.stopPropagation()} // IMPORTANT for pressable cards
+        onClick={(e) => e.stopPropagation()} 
       >
         <option value="not_started">Not Started</option>
         <option value="in_progress">In Progress</option>
         <option value="completed">Completed</option>
       </select>
 
-      <ChevronDown className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 opacity-70" />
+      <ChevronDown className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 opacity-100" />
     </div>
   );
 }

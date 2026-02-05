@@ -2,15 +2,13 @@
 
 import { useMemo, useState } from "react";
 import { ChevronLeft, ChevronRight, Plus } from "lucide-react";
-
 import { useTasks } from "@/lib/hooks/useTasks";
 import type { Task } from "@/lib/api/tasks.api";
-
 import TaskList from "@/components/tasks/TaskList";
 import AddTaskModal from "@/components/tasks/AddTaskModal";
 import TaskDetailModal from "@/components/tasks/TaskDetailModal";
+import EditTaskModal from "@/components/tasks/EditTaskModal";
 
-/** ---------- Date helpers ---------- */
 function pad2(n: number) {
   return String(n).padStart(2, "0");
 }
@@ -21,11 +19,12 @@ function toYMDLocal(d: Date) {
 
 function toYMDFromStr(dateStr?: string | null): string | null {
   if (!dateStr) return null;
-  if (/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) return dateStr;
+  if (dateStr.length >= 10) return dateStr.slice(0, 10);
+  return null;
+}
 
-  const d = new Date(dateStr);
-  if (Number.isNaN(d.getTime())) return null;
-  return toYMDLocal(d);
+function todayYMD() {
+  return new Date().toISOString().slice(0, 10);
 }
 
 function startOfMonth(d: Date) {
@@ -38,7 +37,7 @@ function endOfMonth(d: Date) {
 
 function startOfCalendarGrid(monthStart: Date) {
   const s = new Date(monthStart);
-  const day = s.getDay(); // Sun=0
+  const day = s.getDay(); 
   s.setDate(s.getDate() - day);
   return s;
 }
@@ -58,24 +57,25 @@ function monthLabel(d: Date) {
 }
 
 export default function CalendarPage() {
-  const { tasks, loading, err, patch, remove, add, refresh } = useTasks();
-
-  // ✅ Initialize state directly (no useEffect setState)
+  const { tasks, loading, err, patch, remove, add } = useTasks();
   const [monthCursor, setMonthCursor] = useState<Date>(() => startOfMonth(new Date()));
-  const [selectedYMD, setSelectedYMD] = useState<string>(() => toYMDLocal(new Date()));
-
+  const [selectedYMD, setSelectedYMD] = useState<string>(() => todayYMD());
   const [openAdd, setOpenAdd] = useState(false);
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
+  const [editTask, setEditTask] = useState<Task | null>(null);
 
   const tasksByDay = useMemo(() => {
     const map = new Map<string, Task[]>();
+
     for (const t of tasks) {
       const ymd = toYMDFromStr(t.dueDate);
       if (!ymd) continue;
+
       const prev = map.get(ymd) ?? [];
       prev.push(t);
       map.set(ymd, prev);
     }
+
     return map;
   }, [tasks]);
 
@@ -91,7 +91,7 @@ export default function CalendarPage() {
     return tasksByDay.get(selectedYMD) ?? [];
   }, [tasksByDay, selectedYMD]);
 
-  const todayYMD = toYMDLocal(new Date());
+  const today = todayYMD();
 
   return (
     <main>
@@ -103,6 +103,7 @@ export default function CalendarPage() {
         </div>
 
         <button
+          type="button"
           onClick={() => setOpenAdd(true)}
           className="inline-flex items-center gap-2 rounded-2xl bg-slate-900 px-6 py-3 text-white shadow-sm hover:opacity-95"
         >
@@ -120,6 +121,7 @@ export default function CalendarPage() {
 
           <div className="flex items-center gap-2">
             <button
+              type="button"
               className="rounded-lg border border-slate-200 p-2 hover:bg-slate-50"
               onClick={() =>
                 setMonthCursor(new Date(monthCursor.getFullYear(), monthCursor.getMonth() - 1, 1))
@@ -130,6 +132,7 @@ export default function CalendarPage() {
             </button>
 
             <button
+              type="button"
               className="rounded-lg border border-slate-200 p-2 hover:bg-slate-50"
               onClick={() =>
                 setMonthCursor(new Date(monthCursor.getFullYear(), monthCursor.getMonth() + 1, 1))
@@ -140,11 +143,12 @@ export default function CalendarPage() {
             </button>
 
             <button
+              type="button"
               className="ml-2 rounded-lg bg-slate-100 px-3 py-2 text-sm text-slate-700 hover:bg-slate-200"
               onClick={() => {
                 const now = new Date();
                 setMonthCursor(startOfMonth(now));
-                setSelectedYMD(toYMDLocal(now));
+                setSelectedYMD(todayYMD());
               }}
             >
               Today
@@ -164,7 +168,7 @@ export default function CalendarPage() {
           {gridDays.map((d) => {
             const ymd = toYMDLocal(d);
             const inMonth = d >= monthStart && d <= monthEnd;
-            const isToday = ymd === todayYMD;
+            const isToday = ymd === today;
             const isSelected = ymd === selectedYMD;
 
             const dayTasks = tasksByDay.get(ymd) ?? [];
@@ -225,13 +229,14 @@ export default function CalendarPage() {
             <TaskList
               tasks={selectedTasks}
               onPressTask={(task) => setSelectedTask(task)}
+              onEditTask={(task) => setEditTask(task)}
               onChangeStatus={async (id, status) => {
                 const updated = await patch(id, { status });
-                if (selectedTask?._id === id) setSelectedTask(updated);
+                setSelectedTask((curr) => (curr?._id === id ? updated : curr));
               }}
               onDelete={async (id) => {
                 await remove(id);
-                if (selectedTask?._id === id) setSelectedTask(null);
+                setSelectedTask((curr) => (curr?._id === id ? null : curr));
               }}
             />
           )
@@ -242,8 +247,13 @@ export default function CalendarPage() {
         <AddTaskModal
           onClose={() => setOpenAdd(false)}
           onAdd={async (payload) => {
-            await add(payload);
-            await refresh();
+            const created = await add(payload);
+
+            // ✅ jump to the date of the task you created
+            const ymd = toYMDFromStr(created.dueDate) ?? todayYMD();
+            setSelectedYMD(ymd);
+            setMonthCursor(startOfMonth(new Date(ymd)));
+
             setOpenAdd(false);
           }}
         />
@@ -253,13 +263,31 @@ export default function CalendarPage() {
         <TaskDetailModal
           task={selectedTask}
           onClose={() => setSelectedTask(null)}
-          onStatusChange={async (id, status) => {
+           onStatusChange={async (id, status) => {
             const updated = await patch(id, { status });
             setSelectedTask(updated);
           }}
-          onDelete={async (id) => {
-            await remove(id);
+           onDelete={async (id) => {
+             await remove(id);
             setSelectedTask(null);
+          }}
+          onSaveEdit={async (id, updates) => {
+             const updated = await patch(id, updates);
+             setSelectedTask(updated);
+           }}
+         />
+       )}
+      {editTask && (
+        <EditTaskModal
+          task={editTask}
+          onClose={() => setEditTask(null)}
+          onSave={async (id, updates) => {
+            const updated = await patch(id, updates);
+
+            // keep any open detail modal synced
+            setSelectedTask((curr) => (curr?._id === id ? updated : curr));
+
+            setEditTask(null);
           }}
         />
       )}

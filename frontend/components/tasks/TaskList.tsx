@@ -8,15 +8,15 @@ export default function TaskList({
   onChangeStatus,
   onDelete,
   onChangePriority,
-  onChangeCategory,
   onPressTask,
+  onEditTask,
 }: {
   tasks: Task[];
   onChangeStatus: (id: string, status: TaskStatus) => void;
   onDelete: (id: string) => void;
   onChangePriority?: (id: string, priority: TaskPriority) => void;
-  onChangeCategory?: (id: string, category: string) => void;
   onPressTask?: (task: Task) => void;
+  onEditTask?: (task: Task) => void;
 }) {
   return (
     <div className="space-y-6">
@@ -25,13 +25,11 @@ export default function TaskList({
           key={t._id}
           task={t}
           onPress={onPressTask}
+          onEdit={onEditTask}
           onChangeStatus={(status) => onChangeStatus(t._id, status)}
           onDelete={() => onDelete(t._id)}
           onChangePriority={
             onChangePriority ? (p) => onChangePriority(t._id, p) : undefined
-          }
-          onChangeCategory={
-            onChangeCategory ? (c) => onChangeCategory(t._id, c) : undefined
           }
         />
       ))}

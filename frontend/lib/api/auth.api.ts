@@ -5,9 +5,15 @@ export interface AuthResponse {
   token?: string;
 }
 
+const notifyAuthChanged = () => {
+  if (typeof window === "undefined") return;
+  window.dispatchEvent(new Event("auth:changed"));
+};
+
 const safeSetToken = (token: string) => {
   if (typeof window === "undefined") return;
   localStorage.setItem("token", token);
+  notifyAuthChanged();
 };
 
 export const getToken = (): string | null => {
@@ -18,6 +24,7 @@ export const getToken = (): string | null => {
 export const logout = () => {
   if (typeof window === "undefined") return;
   localStorage.removeItem("token");
+  notifyAuthChanged();
 };
 
 export const isAuthenticated = () => !!getToken();
@@ -36,5 +43,17 @@ export const signup = async (username: string, password: string) => {
   return apiRequest<AuthResponse>("/api/auth/signup", {
     method: "POST",
     body: { username, password },
+  });
+};
+
+// ✅ ADD THIS: Change Password
+export const changePassword = async (payload: {
+  currentPassword: string;
+  newPassword: string;
+}) => {
+  return apiRequest<{ message: string }>("/api/auth/password", {
+    method: "PATCH",
+    auth: true,
+    body: payload,
   });
 };

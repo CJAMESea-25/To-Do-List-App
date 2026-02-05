@@ -8,7 +8,7 @@ export default function HomePage() {
   const router = useRouter();
 
   useEffect(() => {
-    router.replace(isAuthenticated() ? "/today" : "/login");
+    router.replace(isAuthenticated() ? "/allTasks" : "/login");
   }, [router]);
 
   return null;

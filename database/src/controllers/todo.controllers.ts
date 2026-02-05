@@ -7,10 +7,12 @@ const ALLOWED_STATUS: TodoStatus[] = ["not_started", "in_progress", "completed"]
 
 export const createTodo = async (req: AuthedRequest, res: Response) => {
   try {
-    const { title, description, status } = req.body as {
+    const { title, description, status, dueDate, category } = req.body as {
       title?: string;
       description?: string;
       status?: TodoStatus;
+      dueDate?: string | null;
+      category?: string;
     };
 
     if (!title || !title.trim()) {
@@ -21,11 +23,21 @@ export const createTodo = async (req: AuthedRequest, res: Response) => {
       return res.status(400).json({ message: "Invalid status" });
     }
 
+    if (dueDate !== undefined && dueDate !== null && typeof dueDate !== "string") {
+      return res.status(400).json({ message: "Invalid dueDate" });
+    }
+
+    if (category !== undefined && typeof category !== "string") {
+      return res.status(400).json({ message: "Invalid category" });
+    }
+
     const todo = await Todo.create({
       userId: req.user!.userId,
       title: title.trim(),
       description: description ?? "",
       status: status ?? "not_started",
+      dueDate: dueDate ?? null,
+      category: category ?? "",
     });
 
     return res.status(201).json(todo);
@@ -47,10 +59,12 @@ export const updateTodo = async (req: AuthedRequest, res: Response) => {
   try {
     const { id } = req.params;
 
-    const { title, description, status } = req.body as {
+    const { title, description, status, dueDate, category } = req.body as {
       title?: string;
       description?: string;
       status?: TodoStatus;
+      dueDate?: string | null;
+      category?: string;
     };
 
     // validate status if provided
@@ -63,6 +77,14 @@ export const updateTodo = async (req: AuthedRequest, res: Response) => {
     if (title !== undefined) update.title = String(title).trim();
     if (description !== undefined) update.description = String(description);
     if (status !== undefined) update.status = status;
+
+    if (dueDate !== undefined) {
+      if (dueDate === null) update.dueDate = null;
+      else if (typeof dueDate === "string") update.dueDate = String(dueDate);
+      else return res.status(400).json({ message: "Invalid dueDate" });
+    }
+
+    if (category !== undefined) update.category = String(category);
 
     const todo = await Todo.findOneAndUpdate(
       { _id: id, userId: req.user!.userId },

@@ -18,7 +18,7 @@ export default function LoginPage() {
     setLoading(true);
     try {
       await login(username, password);
-      router.push("/today");
+      router.push("/allTasks");
     } catch (error: unknown) {
       setErr(error instanceof Error ? error.message : "An error occurred");
     } finally {
@@ -30,7 +30,7 @@ export default function LoginPage() {
     <main className="min-h-screen flex items-center justify-center bg-gray-800 px-4">
       <form onSubmit={onSubmit} className="w-full max-w-md rounded-2xl bg-white p-6 shadow">
         <h1 className="text-2xl text-black font-semibold text-center">Login</h1>
-
+    
         <input
           className="mt-5 w-full rounded-lg border px-3 py-2 text-gray-700"
           placeholder="Username"
@@ -50,7 +50,7 @@ export default function LoginPage() {
 
         <button
           disabled={loading}
-          className="mt-4 w-full rounded-lg bg-slate-900 py-2 font-medium text-white disabled:opacity-60"
+          className="mt-4 w-full rounded-lg bg-black py-2 font-medium text-white disabled:opacity-60"
         >
           {loading ? "Logging in..." : "Login"}
         </button>

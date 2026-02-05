@@ -18,7 +18,7 @@ export default function SignupPage() {
     setLoading(true);
     try {
       await signup(username, password);
-      router.push("/login");
+      router.push("/allTasks");
     } catch (error: unknown) {
       setErr(error instanceof Error ? error.message : "An error occurred");
     } finally {
