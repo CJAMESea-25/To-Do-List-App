@@ -17,10 +17,10 @@ export default function StatusDropdown({
 
   const cls =
     value === "completed"
-      ? `border-green-200 bg-green-50 text-green-900`
+      ? `border-green-200 bg-green-50 text-black`
       : value === "in_progress"
-      ? `border-blue-200 bg-blue-50 text-blue-900`
-      : `border-slate-200 bg-white text-slate-900`;
+      ? `border-blue-200 bg-blue-50 text-black`
+      : `border-slate-200 bg-white text-black`;
 
   return (
     <div className={`relative ${className}`}>

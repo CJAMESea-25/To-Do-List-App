@@ -70,7 +70,6 @@ function CardButton({
       className={[
         "rounded-2xl border border-slate-200 bg-white p-6 shadow-sm text-left transition",
         "hover:bg-slate-50",
-        // ✅ optional: tiny indicator only (doesn't change UI much)
         active ? "ring-1 ring-slate-900/10" : "",
       ].join(" ")}
       aria-pressed={active}

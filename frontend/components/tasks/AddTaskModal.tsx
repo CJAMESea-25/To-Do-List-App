@@ -1,6 +1,8 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import PriorityBadge from "@/components/ui/PriorityBadge";
+import StatusDropdown from "@/components/ui/StatusDropdown";
 import { X, Flag, Calendar, FolderKanban, CheckCircle2, Plus } from "lucide-react";
 import type { TaskPriority, TaskStatus } from "@/lib/api/tasks.api";
 
@@ -16,7 +18,7 @@ type AddTaskPayload = {
 export default function AddTaskModal({
   onClose,
   onAdd,
-  categories: initialCategories = ["Design", "Engineering"],
+  categories: initialCategories = ["Design", "Engineering", "UI/UX", "Marketing", "Sales", "Report", "Research"],
 }: {
   onClose: () => void;
   onAdd: (payload: AddTaskPayload) => Promise<void> | void;
@@ -81,16 +83,12 @@ export default function AddTaskModal({
       className="fixed inset-0 z-50 flex items-center justify-center p-4"
       onMouseDown={onClose}
     >
-      {/* Backdrop */}
       <div className="absolute inset-0 bg-black/20 backdrop-blur-sm" />
-
-      {/* Modal */}
       <div
         className="relative w-full max-w-2xl rounded-2xl border border-white/20 bg-white/90 p-8 shadow-2xl backdrop-blur-xl"
         onMouseDown={(e) => e.stopPropagation()}
         style={{ boxShadow: "0 8px 32px 0 rgba(0, 0, 0, 0.08)" }}
       >
-        {/* Close */}
         <button
           onClick={onClose}
           type="button"
@@ -100,14 +98,12 @@ export default function AddTaskModal({
           <X className="h-5 w-5 text-slate-500" />
         </button>
 
-        {/* Header */}
         <div className="mb-8">
           <h2 className="text-2xl font-semibold text-slate-900">Add New Task</h2>
-          <p className="mt-2 text-sm text-slate-700">Create a new task to stay organized</p>
+          <p className="mt-2 text-sm text-slate-700">Create a new task</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Title */}
           <div className="space-y-2">
             <label className="text-sm text-slate-900">Task Title *</label>
             <input
@@ -121,7 +117,6 @@ export default function AddTaskModal({
             />
           </div>
 
-          {/* Description */}
           <div className="space-y-2">
             <label className="text-sm text-slate-900">Description</label>
             <textarea
@@ -133,9 +128,7 @@ export default function AddTaskModal({
             />
           </div>
 
-          {/* Status / Priority / Due Date */}
           <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-            {/* Status */}
             <div className="space-y-2">
               <label className="flex items-center gap-2 text-sm text-slate-900">
                 <CheckCircle2 className="h-4 w-4 text-slate-900" />
@@ -144,7 +137,7 @@ export default function AddTaskModal({
               <select
                 value={status}
                 onChange={(e) => setStatus(e.target.value as TaskStatus)}
-                className="w-full rounded-lg border border-slate-900 bg-white px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-slate-300"
+                className="w-full rounded-lg border border-slate-900 bg-white px-3 py-2 text-sm text-black outline-none focus:ring-2 focus:ring-slate-900"
               >
                 <option value="not_started">Not Started</option>
                 <option value="in_progress">In Progress</option>
@@ -152,7 +145,6 @@ export default function AddTaskModal({
               </select>
             </div>
 
-            {/* Priority */}
             <div className="space-y-2">
               <label className="flex items-center gap-2 text-sm text-slate-900">
                 <Flag className="h-4 w-4 text-slate-900" />
@@ -161,7 +153,7 @@ export default function AddTaskModal({
               <select
                 value={priority}
                 onChange={(e) => setPriority(e.target.value as TaskPriority)}
-                className="w-full rounded-lg border border-slate-900 bg-white px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-slate-900"
+                className="w-full rounded-lg border border-slate-900 bg-white px-3 py-2 text-sm text-black outline-none focus:ring-2 focus:ring-slate-900"
               >
                 <option value="low">Low</option>
                 <option value="medium">Medium</option>
@@ -169,7 +161,6 @@ export default function AddTaskModal({
               </select>
             </div>
 
-            {/* Due Date */}
             <div className="space-y-2">
               <label className="flex items-center gap-2 text-sm text-slate-900">
                 <Calendar className="h-4 w-4 text-slate-900" />
@@ -179,12 +170,11 @@ export default function AddTaskModal({
                 type="date"
                 value={dueDate}
                 onChange={(e) => setDueDate(e.target.value)}
-                className="w-full rounded-lg border border-slate-900 bg-white px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-slate-300"
+                className="w-full rounded-lg border border-slate-900 bg-white px-3 py-2 text-sm text-black outline-none focus:ring-2 focus:ring-slate-900"
               />
             </div>
           </div>
 
-          {/* Category */}
           <div className="space-y-2">
             <label className="flex items-center gap-2 text-sm text-slate-900">
               <FolderKanban className="h-4 w-4 text-slate-900" />
@@ -196,7 +186,7 @@ export default function AddTaskModal({
                 <select
                   value={category}
                   onChange={(e) => setCategory(e.target.value)}
-                  className="flex-1 rounded-lg border border-slate-900 bg-white px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-slate-300"
+                  className="flex-1 rounded-lg border border-slate-900 bg-white px-3 py-2 text-sm text-black outline-none focus:ring-2 focus:ring-slate-300"
                 >
                   <option value="">Select a category</option>
                   {categories.map((c) => (
@@ -239,7 +229,7 @@ export default function AddTaskModal({
                 <button
                   type="button"
                   onClick={handleAddCategory}
-                  className="rounded-lg bg-slate-900 px-4 py-2 text-sm text-white hover:opacity-95"
+                  className="rounded-lg bg-slate-900 px-4 py-2 text-sm text-black hover:opacity-95"
                 >
                   Add
                 </button>
@@ -258,7 +248,6 @@ export default function AddTaskModal({
             )}
           </div>
 
-          {/* Actions */}
           <div className="flex justify-end gap-3 border-t border-slate-900 pt-6">
             <button
               type="button"

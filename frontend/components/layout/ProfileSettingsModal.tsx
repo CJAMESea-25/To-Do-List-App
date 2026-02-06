@@ -12,21 +12,17 @@ export default function ProfileSettingsModal({
   onAuthFail,
 }: {
   onClose: () => void;
-  onAuthFail?: () => void; // optional: redirect to /login in parent
+  onAuthFail?: () => void;
 }) {
   const [loading, setLoading] = useState(true);
-
-  // Username form
   const [username, setUsername] = useState("");
   const [usernameSaving, setUsernameSaving] = useState(false);
 
-  // Password form
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmNewPassword, setConfirmNewPassword] = useState("");
   const [passwordSaving, setPasswordSaving] = useState(false);
 
-  // Messages
   const [err, setErr] = useState("");
   const [ok, setOk] = useState("");
 
@@ -158,14 +154,13 @@ export default function ProfileSettingsModal({
               {/* Username */}
               <section className="rounded-2xl border border-slate-200 p-5">
                 <h3 className="text-sm font-semibold text-slate-900">Change Username</h3>
-                <p className="mt-1 text-sm text-slate-500">This updates how your name appears in the app.</p>
 
                 <div className="mt-4 space-y-2">
-                  <label className="text-sm text-slate-700">Username</label>
+                  <label className="text-sm text-slate-900">Username</label>
                   <input
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
-                    className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-slate-300"
+                    className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm text-black outline-none focus:ring-2 focus:ring-slate-300"
                   />
                 </div>
 
@@ -184,7 +179,6 @@ export default function ProfileSettingsModal({
               {/* Password */}
               <section className="mt-4 rounded-2xl border border-slate-200 p-5">
                 <h3 className="text-sm font-semibold text-slate-900">Change Password</h3>
-                <p className="mt-1 text-sm text-slate-500">Use a strong password you don’t reuse elsewhere.</p>
 
                 <div className="mt-4 grid gap-4">
                   <div className="space-y-2">
@@ -193,7 +187,7 @@ export default function ProfileSettingsModal({
                       type="password"
                       value={currentPassword}
                       onChange={(e) => setCurrentPassword(e.target.value)}
-                      className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-slate-300"
+                      className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm taxt-black outline-none focus:ring-2 focus:ring-slate-300"
                     />
                   </div>
 
@@ -203,7 +197,7 @@ export default function ProfileSettingsModal({
                       type="password"
                       value={newPassword}
                       onChange={(e) => setNewPassword(e.target.value)}
-                      className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-slate-300"
+                      className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm text-black outline-none focus:ring-2 focus:ring-slate-300"
                     />
                   </div>
 
@@ -213,7 +207,7 @@ export default function ProfileSettingsModal({
                       type="password"
                       value={confirmNewPassword}
                       onChange={(e) => setConfirmNewPassword(e.target.value)}
-                      className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-slate-300"
+                      className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm text-black outline-none focus:ring-2 focus:ring-slate-300"
                     />
                   </div>
                 </div>

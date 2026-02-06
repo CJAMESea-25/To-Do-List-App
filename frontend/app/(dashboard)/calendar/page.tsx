@@ -95,7 +95,6 @@ export default function CalendarPage() {
 
   return (
     <main>
-      {/* Header */}
       <div className="flex items-start justify-between">
         <div>
           <h1 className="text-4xl font-semibold text-slate-900">Calendar</h1>
@@ -112,8 +111,7 @@ export default function CalendarPage() {
         </button>
       </div>
 
-      {/* Calendar card */}
-      <div className="mt-8 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+\      <div className="mt-8 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
         <div className="flex items-center justify-between">
           <div className="text-lg font-semibold text-slate-900">
             {monthLabel(monthCursor)}
@@ -122,24 +120,24 @@ export default function CalendarPage() {
           <div className="flex items-center gap-2">
             <button
               type="button"
-              className="rounded-lg border border-slate-200 p-2 hover:bg-slate-50"
+              className="rounded-lg border border-slate-900 p-2 hover:bg-slate-50"
               onClick={() =>
                 setMonthCursor(new Date(monthCursor.getFullYear(), monthCursor.getMonth() - 1, 1))
               }
               aria-label="Previous month"
             >
-              <ChevronLeft className="h-4 w-4" />
+              <ChevronLeft className="h-4 w-4 text-slate-950" />
             </button>
 
             <button
               type="button"
-              className="rounded-lg border border-slate-200 p-2 hover:bg-slate-50"
+              className="rounded-lg border border-slate-900 p-2 hover:bg-slate-50"
               onClick={() =>
                 setMonthCursor(new Date(monthCursor.getFullYear(), monthCursor.getMonth() + 1, 1))
               }
               aria-label="Next month"
             >
-              <ChevronRight className="h-4 w-4" />
+              <ChevronRight className="h-4 w-4 text-slate-950" />
             </button>
 
             <button
@@ -151,19 +149,17 @@ export default function CalendarPage() {
                 setSelectedYMD(todayYMD());
               }}
             >
-              Today
+              Today 
             </button>
           </div>
         </div>
 
-        {/* Weekdays */}
         <div className="mt-5 grid grid-cols-7 gap-2 text-xs font-medium text-slate-500">
           {["Sun","Mon","Tue","Wed","Thu","Fri","Sat"].map((w) => (
             <div key={w} className="px-2 py-1">{w}</div>
           ))}
         </div>
 
-        {/* Grid */}
         <div className="mt-2 grid grid-cols-7 gap-2">
           {gridDays.map((d) => {
             const ymd = toYMDLocal(d);
@@ -210,7 +206,6 @@ export default function CalendarPage() {
         </div>
       </div>
 
-      {/* Selected day tasks */}
       <div className="mt-8">
         <div className="mb-3">
           <h2 className="text-lg font-semibold text-slate-900">
@@ -249,7 +244,6 @@ export default function CalendarPage() {
           onAdd={async (payload) => {
             const created = await add(payload);
 
-            // ✅ jump to the date of the task you created
             const ymd = toYMDFromStr(created.dueDate) ?? todayYMD();
             setSelectedYMD(ymd);
             setMonthCursor(startOfMonth(new Date(ymd)));
@@ -283,8 +277,6 @@ export default function CalendarPage() {
           onClose={() => setEditTask(null)}
           onSave={async (id, updates) => {
             const updated = await patch(id, updates);
-
-            // keep any open detail modal synced
             setSelectedTask((curr) => (curr?._id === id ? updated : curr));
 
             setEditTask(null);

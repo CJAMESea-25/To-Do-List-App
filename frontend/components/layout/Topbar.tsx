@@ -107,14 +107,14 @@ export default function Topbar() {
 
             {open && (
               <div className="absolute right-0 mt-2 w-56 rounded-xl border bg-white shadow-lg">
-                <div className="px-4 py-3 text-xs font-semibold text-slate-500">
+                <div className="px-4 py-3 text-xs font-semibold text-black">
                   MY ACCOUNT
                 </div>
 
                 <div className="h-px bg-slate-100" />
 
                 <button
-                  className="flex w-full items-center gap-2 px-4 py-2 text-sm hover:bg-slate-50"
+                  className="flex w-full items-center gap-2 px-4 py-2 text-sm text-black hover:bg-slate-50"
                   onClick={() => {
                     setShowSettings(true);
                     setOpen(false);
@@ -125,7 +125,7 @@ export default function Topbar() {
                 </button>
 
                 <button
-                  className="flex w-full items-center gap-2 px-4 py-2 text-sm hover:bg-slate-50"
+                  className="flex w-full items-center gap-2 px-4 py-2 text-sm text-black hover:bg-slate-50"
                   onClick={() => {
                     setShowProfile(true);
                     setOpen(false);

@@ -15,9 +15,7 @@ type EditUpdates = {
 
 function toDateInputValue(dueDate?: string | null) {
   if (!dueDate) return "";
-  // accept "YYYY-MM-DD"
   if (/^\d{4}-\d{2}-\d{2}$/.test(dueDate)) return dueDate;
-  // accept ISO
   const d = new Date(dueDate);
   if (Number.isNaN(d.getTime())) return "";
   const yyyy = d.getFullYear();
@@ -30,7 +28,7 @@ export default function EditTaskModal({
   task,
   onClose,
   onSave,
-  categories: initialCategories = ["Design", "Engineering"],
+  categories: initialCategories = ["Design", "Engineering", "UI/UX", "Marketing", "Sales", "Report", "Research"],
 }: {
   task: Task;
   onClose: () => void;
@@ -98,39 +96,36 @@ export default function EditTaskModal({
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Title */}
           <div className="space-y-2">
-            <label className="text-sm text-slate-700">Task Title *</label>
+            <label className="text-sm text-slate-900">Task Title *</label>
             <input
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-slate-300"
+              className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-black outline-none focus:ring-2 focus:ring-slate-300"
               required
               autoFocus
             />
           </div>
 
-          {/* Description */}
           <div className="space-y-2">
-            <label className="text-sm text-slate-700">Description</label>
+            <label className="text-sm text-slate-900">Description</label>
             <textarea
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               rows={3}
-              className="min-h-24 w-full resize-none rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-slate-300"
+              className="min-h-24 w-full resize-none rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-black outline-none focus:ring-2 focus:ring-slate-300"
             />
           </div>
 
-          {/* Status / Priority / Due Date */}
           <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
             <div className="space-y-2">
-              <label className="flex items-center gap-2 text-sm text-slate-700">
-                <CheckCircle2 className="h-4 w-4 text-slate-400" /> Status
+              <label className="flex items-center gap-2 text-sm text-slate-900">
+                <CheckCircle2 className="h-4 w-4 text-slate-900" /> Status
               </label>
               <select
                 value={status}
                 onChange={(e) => setStatus(e.target.value as TaskStatus)}
-                className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-slate-300"
+                className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-black outline-none focus:ring-2 focus:ring-slate-300"
               >
                 <option value="not_started">Not Started</option>
                 <option value="in_progress">In Progress</option>
@@ -139,13 +134,13 @@ export default function EditTaskModal({
             </div>
 
             <div className="space-y-2">
-              <label className="flex items-center gap-2 text-sm text-slate-700">
-                <Flag className="h-4 w-4 text-slate-400" /> Priority
+              <label className="flex items-center gap-2 text-sm text-slate-900">
+                <Flag className="h-4 w-4 text-slate-900" /> Priority
               </label>
               <select
                 value={priority}
                 onChange={(e) => setPriority(e.target.value as TaskPriority)}
-                className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-slate-300"
+                className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-black outline-none focus:ring-2 focus:ring-slate-300"
               >
                 <option value="low">Low</option>
                 <option value="medium">Medium</option>
@@ -154,22 +149,21 @@ export default function EditTaskModal({
             </div>
 
             <div className="space-y-2">
-              <label className="flex items-center gap-2 text-sm text-slate-700">
-                <Calendar className="h-4 w-4 text-slate-400" /> Due Date
+              <label className="flex items-center gap-2 text-sm text-slate-900">
+                <Calendar className="h-4 w-4 text-slate-900" /> Due Date
               </label>
               <input
                 type="date"
                 value={dueDate}
                 onChange={(e) => setDueDate(e.target.value)}
-                className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-slate-300"
+                className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-black outline-none focus:ring-2 focus:ring-slate-300"
               />
             </div>
           </div>
 
-          {/* Category */}
           <div className="space-y-2">
-            <label className="flex items-center gap-2 text-sm text-slate-700">
-              <FolderKanban className="h-4 w-4 text-slate-400" /> Category
+            <label className="flex items-center gap-2 text-sm text-slate-900">
+              <FolderKanban className="h-4 w-4 text-slate-900" /> Category
             </label>
 
             {!showAddCategory ? (
@@ -177,7 +171,7 @@ export default function EditTaskModal({
                 <select
                   value={category}
                   onChange={(e) => setCategory(e.target.value)}
-                  className="flex-1 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-slate-300"
+                  className="flex-1 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-black outline-none focus:ring-2 focus:ring-slate-300"
                 >
                   <option value="">Select a category</option>
                   {categories.map((c) => (
@@ -226,7 +220,6 @@ export default function EditTaskModal({
             )}
           </div>
 
-          {/* Actions */}
           <div className="flex justify-end gap-3 border-t border-slate-200 pt-6">
             <button
               type="button"

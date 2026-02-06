@@ -1,19 +1,14 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import {
-  Calendar,
-  FolderKanban,
-  Trash2,
-  CheckCircle2,
-  Pencil,
-} from "lucide-react";
+import { Calendar, FolderKanban, Trash2, CheckCircle2, Pencil } from "lucide-react";
 
 import type { Task, TaskStatus } from "@/lib/api/tasks.api";
 import { formatShortDate } from "@/lib/hooks/date";
 
 import PriorityBadge from "@/components/ui/PriorityBadge";
 import StatusDropdown from "@/components/ui/StatusDropdown";
+import ConfirmDeleteModal from "@/components/ui/DeleteTaskModal";
 import EditTaskModal from "@/components/tasks/EditTaskModal";
 
 const statusStyles: Record<TaskStatus, string> = {
@@ -53,6 +48,9 @@ export default function TaskDetailModal({
 }) {
   const [editOpen, setEditOpen] = useState(false);
 
+  const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+
   const dueLabel = useMemo(() => {
     if (!task.dueDate) return "";
     return formatShortDate(task.dueDate);
@@ -71,21 +69,14 @@ export default function TaskDetailModal({
           onMouseDown={(e) => e.stopPropagation()}
           style={{ boxShadow: "0 8px 32px 0 rgba(0, 0, 0, 0.08)" }}
         >
-          {/* ✅ Status at top-right */}
           <div className="absolute right-6 top-6">
-            <StatusDropdown
-              value={task.status}
-              onChange={(v) => onStatusChange(task._id, v)}
-            />
+            <StatusDropdown value={task.status} onChange={(v) => onStatusChange(task._id, v)} />
           </div>
 
-          {/* Header */}
           <div className="mb-8">
             <h2
               className={`mb-2 text-2xl font-semibold ${
-                task.status === "completed"
-                  ? "text-slate-400 line-through"
-                  : "text-slate-900"
+                task.status === "completed" ? "text-slate-400 line-through" : "text-slate-900"
               }`}
             >
               {task.title}
@@ -94,17 +85,13 @@ export default function TaskDetailModal({
             <PriorityBadge value={task.priority} />
           </div>
 
-          {/* Description */}
           {task.description ? (
             <div className="mb-8">
               <h3 className="mb-3 text-sm text-slate-500">Description</h3>
-              <p className="leading-relaxed text-slate-900">
-                {task.description}
-              </p>
+              <p className="leading-relaxed text-slate-900">{task.description}</p>
             </div>
           ) : null}
 
-          {/* Meta */}
           <div className="space-y-4 border-t border-slate-200 pt-6">
             <div className="flex items-center gap-3">
               <CheckCircle2 className="h-4 w-4 text-slate-400" />
@@ -135,13 +122,9 @@ export default function TaskDetailModal({
             )}
           </div>
 
-          {/* Actions */}
           <div className="mt-8 flex justify-between gap-3 border-t border-slate-200 pt-6">
             <button
-              onClick={async () => {
-                await onDelete(task._id);
-                onClose();
-              }}
+              onClick={() => setConfirmDeleteOpen(true)}
               className="flex items-center gap-2 rounded-lg px-4 py-2 text-sm text-red-600 transition-colors hover:bg-red-50"
             >
               <Trash2 className="h-4 w-4" />
@@ -175,6 +158,27 @@ export default function TaskDetailModal({
           onSave={async (id, updates) => {
             await onSaveEdit(id, updates);
             setEditOpen(false);
+          }}
+        />
+      )}
+
+      {confirmDeleteOpen && (
+        <ConfirmDeleteModal
+          title="Delete task?"
+          message={`Delete "${task.title}"? This cannot be undone.`}
+          confirmText="Delete"
+          cancelText="Cancel"
+          loading={deleting}
+          onCancel={() => setConfirmDeleteOpen(false)}
+          onConfirm={async () => {
+            try {
+              setDeleting(true);
+              await onDelete(task._id);
+              setConfirmDeleteOpen(false);
+              onClose();
+            } finally {
+              setDeleting(false);
+            }
           }}
         />
       )}

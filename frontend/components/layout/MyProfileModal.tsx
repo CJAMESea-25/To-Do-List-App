@@ -1,4 +1,3 @@
-// components/layout/MyProfileModal.tsx
 "use client";
 
 import { useMemo } from "react";

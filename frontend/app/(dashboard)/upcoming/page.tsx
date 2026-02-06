@@ -8,11 +8,9 @@ import EditTaskModal from "@/components/tasks/EditTaskModal";
 import { useTasks } from "@/lib/hooks/useTasks";
 import type { Task } from "@/lib/api/tasks.api";
 
-/** Convert dateStr (ISO or YYYY-MM-DD) -> YYYY-MM-DD using UTC (stable across timezones) */
 function toYMDUTC(dateStr?: string | null) {
   if (!dateStr) return null;
 
-  // Already YYYY-MM-DD
   if (/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) return dateStr;
 
   const d = new Date(dateStr);
@@ -45,10 +43,9 @@ export default function UpcomingPage() {
     const upcoming = tasks.filter((t) => {
       const ymd = toYMDUTC(t.dueDate);
       if (!ymd) return false;
-      return ymd > today; // strictly after today
+      return ymd > today;
     });
 
-    // soonest first
     upcoming.sort((a, b) => {
       const ay = toYMDUTC(a.dueDate) ?? "9999-12-31";
       const by = toYMDUTC(b.dueDate) ?? "9999-12-31";
@@ -138,7 +135,6 @@ export default function UpcomingPage() {
           onSave={async (id, updates) => {
             const updated = await patch(id, updates);
 
-            // keep details modal synced
             setSelected((curr) => (curr?._id === id ? updated : curr));
 
             setEditTask(null);

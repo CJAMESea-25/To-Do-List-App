@@ -15,10 +15,10 @@ export default function PriorityBadge({
 }) {
   const styles =
     value === "high"
-      ? "border-red-200 bg-red-50 text-red-600"
+      ? "border-red-200 bg-red-50 text-black"
       : value === "low"
-      ? "border-blue-200 bg-blue-50 text-blue-600"
-      : "border-yellow-200 bg-yellow-50 text-yellow-700";
+      ? "border-blue-200 bg-blue-50 text-black"
+      : "border-yellow-200 bg-yellow-50 text-black";
 
   if (!editable || !onChange) {
     return (
@@ -32,7 +32,7 @@ export default function PriorityBadge({
 
   return (
   <select
-      value={value}
+      value={value} 
       onChange={(e) => onChange(e.target.value as TaskPriority)}
       onClick={(e) => e.stopPropagation()}
       className={`rounded-full border px-3 py-1 text-xs font-semibold outline-none appearance-none ${styles} ${className}`}

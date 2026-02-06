@@ -43,7 +43,6 @@ export default function AllTasksPage() {
         </button>
       </div>
 
-      {/* ✅ Clickable cards filter */}
       <div className="mt-6">
         <TaskFilters tasks={tasks} value={filter} onChange={setFilter} />
       </div>
@@ -114,7 +113,6 @@ export default function AllTasksPage() {
           onSave={async (id, updates) => {
             const updated = await patch(id, updates);
 
-            // keep details modal synced if it happens to be open for same task
             setSelected((curr) => (curr?._id === id ? updated : curr));
 
             setEditTask(null);
