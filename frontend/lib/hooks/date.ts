@@ -5,18 +5,16 @@ export function todayYMD() {
   const yyyy = now.getFullYear();
   const mm = String(now.getMonth() + 1).padStart(2, "0");
   const dd = String(now.getDate()).padStart(2, "0");
-  return `${yyyy}-${mm}-${dd}`; // local day
+  return `${yyyy}-${mm}-${dd}`;
 }
 
 export function isToday(dateStr?: string | null) {
   if (!dateStr) return false;
-  // dateStr MUST be "YYYY-MM-DD"
   return dateStr === todayYMD();
 }
 
 export function formatShortDate(dateStr?: string | null) {
   if (!dateStr) return "";
-  // display only; safe to parse parts
   const [y, m, d] = dateStr.split("-");
   const date = new Date(Number(y), Number(m) - 1, Number(d));
   return date.toLocaleDateString(undefined, {
