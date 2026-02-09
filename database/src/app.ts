@@ -6,7 +6,11 @@ import { errorHandler } from "./middleware/error.middleware";
 
 const app = express();
 
-app.use(cors());
+app.use(cors({
+  origin: process.env.CORS_ORIGIN?.split(",") ?? [],
+  credentials: true
+}));
+
 app.use(express.json());
 
 app.get("/", (_req, res) => res.send("API Running"));
