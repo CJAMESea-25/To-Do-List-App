@@ -1,8 +1,6 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import PriorityBadge from "@/components/ui/PriorityBadge";
-import StatusDropdown from "@/components/ui/StatusDropdown";
 import { X, Flag, Calendar, FolderKanban, CheckCircle2, Plus } from "lucide-react";
 import type { TaskPriority, TaskStatus } from "@/lib/api/tasks.api";
 

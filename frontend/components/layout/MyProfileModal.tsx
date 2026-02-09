@@ -45,8 +45,7 @@ export default function MyProfileModal({
         </div>
 
         <div className="mt-6 flex items-center gap-4">
-          {/* ✅ Same avatar style as Topbar */}
-          <div className="grid h-12 w-12 place-items-center rounded-full bg-linear-to-br from-slate-600 to-slate-900 text-sm font-semibold text-white">
+=          <div className="grid h-12 w-12 place-items-center rounded-full bg-linear-to-br from-slate-600 to-slate-900 text-sm font-semibold text-white">
             {initials}
           </div>
 

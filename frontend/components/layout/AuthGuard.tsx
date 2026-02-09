@@ -7,11 +7,9 @@ import { isAuthenticated } from "@/lib/api/auth.api";
 export default function AuthGuard({ children }: { children: React.ReactNode }) {
   const router = useRouter();
 
-  // Start as `null` so server-render and initial client render match (both render nothing)
   const [ready, setReady] = useState<boolean | null>(null);
 
   useEffect(() => {
-    // Read localStorage only on the client after mount
     const auth = isAuthenticated();
     setReady(auth);
     if (!auth) {
