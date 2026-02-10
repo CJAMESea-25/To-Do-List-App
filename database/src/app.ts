@@ -11,14 +11,25 @@ const allowedOrigins = (process.env.CORS_ORIGIN || "")
   .map(origin => origin.trim())
   .filter(Boolean);
 
+console.log("CORS Configuration:");
+console.log("CORS_ORIGIN env:", process.env.CORS_ORIGIN);
+console.log("Allowed Origins:", allowedOrigins);
+
 app.use(cors({
   origin: (origin, callback) => {
-    if (!origin) return callback(null, true);
-
-    if (allowedOrigins.includes(origin)) {
+    console.log("Incoming origin:", origin);
+    
+    if (!origin) {
+      console.log("No origin header, allowing");
       return callback(null, true);
     }
 
+    if (allowedOrigins.includes(origin)) {
+      console.log("Origin allowed:", origin);
+      return callback(null, true);
+    }
+
+    console.log("Origin blocked:", origin);
     return callback(new Error(`CORS blocked: ${origin}`));
   },
   credentials: true,
